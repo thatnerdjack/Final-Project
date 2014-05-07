@@ -27,11 +27,14 @@ class Background
 	def initialize(window)
 		@width = 768
 		@height = 1024
+		@images = []
+		(1..18).each do |n|
+			@images.push Gosu::Image.new(window, "/resources/images/background/#{n.to_i}.png", false)
+		end #STOPPED HERE!
 	end
 	
 	def draw
-		#PUT WHITE BACKGROUND HERE
-		#USE QUAD DRAW FROM GOSU
+		@images.draw(0, 0, 1)
 	end
 end
 
@@ -41,6 +44,7 @@ class GameWindow < Gosu::Window
 		super(768,1024,false)
 		self.caption = "Working Title"
 		@player = Player.new(self)
+		@background = Background.new(self)
 	end
 	
 	def update
@@ -49,6 +53,7 @@ class GameWindow < Gosu::Window
 	
 	def draw
 		@player.draw
+		@background.draw
 	end
 end
 
