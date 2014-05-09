@@ -24,17 +24,23 @@ class Player
 end
 
 class Background
+	attr_reader :images
 	def initialize(window)
 		@width = 768
 		@height = 1024
 		@images = []
-		(1..18).each do |n|
-			@images.push Gosu::Image.new(window, "/resources/images/background/#{n.to_i}.png", false)
-		end #STOPPED HERE!
+		(1..54).each do |n|
+			@images.push Gosu::Image.new(window, "resources/images/background/#{n.to_i}.png", false)
+		end
+		@imageIndex = 0
 	end
 	
 	def draw
-		@images.draw(0, 0, 1)
+		@images[@imageIndex].draw(0,0,1)
+		@imageIndex += 1
+		if @imageIndex == 53
+			@imageIndex = 0
+		end
 	end
 end
 
