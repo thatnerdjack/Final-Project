@@ -15,7 +15,20 @@ class Player
 	def initialize(window)
 		@x = 192
 		@y = 512
+		@vy = 0
 		@image = Gosu::Image.new(window, "resources/images/player.png", false)
+	end
+	
+	def move
+		@y += @vy
+		@vy += 0.9
+		if @y > 946
+			@y = 946
+		end
+	end
+	
+	def jump
+		@vy = -15
 	end
 	
 	def draw
@@ -51,15 +64,28 @@ class GameWindow < Gosu::Window
 		self.caption = "Working Title"
 		@player = Player.new(self)
 		@background = Background.new(self)
+		@initLockout = true
 	end
 	
 	def update
-		
+		if @initLockout == false
+			@player.move
+		else
+			if button_down?(Gosu::KbSpace)
+				@initLockout = false
+			end
+		end
 	end
 	
 	def draw
 		@player.draw
 		@background.draw
+	end
+	
+	def button_down(id)
+		if id == Gosu::KbSpace
+			@player.jump
+		end
 	end
 end
 
