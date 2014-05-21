@@ -80,6 +80,10 @@ class GameWindow < Gosu::Window
 	def draw
 		@player.draw
 		@background.draw
+		if @initLockout == true
+			bgC = Gosu::Color.argb(0x60000000)
+			self.draw_quad(0, 0, bgC, 768, 0, bgC, 768, 1024, bgC, 0, 1024, bgC, 9)
+		end
 	end
 	
 	def button_down(id)
