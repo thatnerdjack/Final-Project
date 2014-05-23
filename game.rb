@@ -13,8 +13,8 @@ require "gosu"
 class Player
 
 	def initialize(window)
-		@x = 192
-		@y = 512
+		@x = 230
+		@y = 480
 		@vy = 0
 		@image = Gosu::Image.new(window, "resources/images/player.png", false)
 	end
@@ -57,6 +57,21 @@ class Background
 	end
 end
 
+class Score
+
+	def initialize(window)
+		@value = 0
+		@x = 333
+		@y = 0
+		@fontScore = Gosu::Font.new(window, "resources/fonts/font.ttf", 144)
+	end
+	
+	def draw
+		@fontScore.draw("#{@value}", @x, @y, 8)
+	end
+
+end
+
 class GameWindow < Gosu::Window
 
 	def initialize
@@ -64,6 +79,7 @@ class GameWindow < Gosu::Window
 		self.caption = "Working Title"
 		@player = Player.new(self)
 		@background = Background.new(self)
+		@score = Score.new(self)
 		@initLockout = true
 	end
 	
@@ -80,9 +96,14 @@ class GameWindow < Gosu::Window
 	def draw
 		@player.draw
 		@background.draw
+		@score.draw
 		if @initLockout == true
 			bgC = Gosu::Color.argb(0x60000000)
+			fontTapTap = Gosu::Font.new(self, "resources/fonts/font.ttf", 60)
+			fontGetReady = Gosu::Font.new(self, "resources/fonts/font.ttf", 96)
 			self.draw_quad(0, 0, bgC, 768, 0, bgC, 768, 1024, bgC, 0, 1024, bgC, 9)
+			fontTapTap.draw("Tap>>•<<Tap", 225, 612, 10)
+			fontGetReady.draw("Get Ready!", 165, 290, 10)
 		end
 	end
 	
