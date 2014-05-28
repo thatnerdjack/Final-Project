@@ -69,6 +69,14 @@ class Score
 	def draw
 		@fontScore.draw("#{@value}", @x, @y, 8)
 	end
+end
+
+class Pipe
+
+	def initialize(window)
+		@x = 1024
+		#Figrue out random top y pos
+	end
 
 end
 
