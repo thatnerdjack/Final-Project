@@ -21,7 +21,7 @@ class Player
 	
 	def move
 		@y += @vy
-		@vy += 0.9
+		@vy += 1
 		if @y > 946
 			@y = 946
 		end
@@ -32,7 +32,7 @@ class Player
 	end
 	
 	def draw
-		@image.draw(@x, @y, 2)
+		@image.draw(@x, @y, 3)
 	end
 end
 
@@ -73,9 +73,24 @@ end
 
 class Pipe
 
+	attr_reader :x, :y, :width, :height
+
 	def initialize(window)
-		@x = 1024
-		#Figrue out random top y pos
+		@x = 768
+		@y = rand(824) + 200
+		@image = Gosu::Image.new(window, "resources/images/pipe.png", false)
+		@width = 235
+		@height = 1103
+		@speed = 3
+	end
+	
+	def draw
+		@image.draw(@x - @width/2, @y - @width/2, 2)
+		@image.draw_rot(@x - @width/2, @y - 200 - @width/2, 2, 180)
+	end
+	
+	def move
+		@x -= @speed
 	end
 
 end
@@ -89,22 +104,36 @@ class GameWindow < Gosu::Window
 		@background = Background.new(self)
 		@score = Score.new(self)
 		@initLockout = true
+		@pipes = []
+		@pipes.push Pipe.new(self)
+		@pipeTimer = 0
 	end
 	
 	def update
 		if @initLockout == false
 			@player.move
+			@pipeTimer += 1
+			if @pipeTimer == 29
+				@pipes.push Pipe.new(self)
+				@pipeTimer = 0
+			end
+			@pipes.each do |pipe|
+				pipe.move
+			end
 		else
 			if button_down?(Gosu::KbSpace)
 				@initLockout = false
-			end
-		end
-	end
+			end #button down if
+		end #lockout if
+	end #def if
 	
 	def draw
 		@player.draw
 		@background.draw
 		@score.draw
+		@pipes.each do |pipe|
+			pipe.draw
+		end
 		if @initLockout == true
 			bgC = Gosu::Color.argb(0x60000000)
 			fontTapTap = Gosu::Font.new(self, "resources/fonts/font.ttf", 60)
@@ -119,6 +148,7 @@ class GameWindow < Gosu::Window
 		if id == Gosu::KbSpace
 			@player.jump
 		end
+		if id == Gosu::Kb
 	end
 end
 
