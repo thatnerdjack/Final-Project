@@ -77,22 +77,37 @@ class Pipe
 
 	def initialize(window)
 		@x = 768
-		@y = rand(824) + 200
+		@yBottom = nil
+		@yTop = nil
+		yPos
 		@image = Gosu::Image.new(window, "resources/images/pipe.png", false)
 		@width = 235
 		@height = 1103
-		@speed = 3
+		@speed = 4
 	end
 	
 	def draw
-		@image.draw(@x - @width/2, @y - @width/2, 2)
-		@image.draw_rot(@x - @width/2, @y - 200 - @width/2, 2, 180)
+		@image.draw_rot(@x, @yBottom - 451, 2, 0)
+		@image.draw_rot(@x, @yTop - 451, 2, 180)
 	end
 	
 	def move
 		@x -= @speed
 	end
-
+	
+	def yPos
+		@yID = rand(3) + 1
+		if @yID == 1
+			@yBottom = 512
+			@yTop = 312
+		elsif @yID == 2
+			@yBottom = 312
+			@yTop = 112
+		elsif @yID == 3
+			@yBottom = 712
+			@yTop = 512
+		end
+	end
 end
 
 class GameWindow < Gosu::Window
@@ -113,7 +128,7 @@ class GameWindow < Gosu::Window
 		if @initLockout == false
 			@player.move
 			@pipeTimer += 1
-			if @pipeTimer == 29
+			if @pipeTimer == 89
 				@pipes.push Pipe.new(self)
 				@pipeTimer = 0
 			end
@@ -148,7 +163,6 @@ class GameWindow < Gosu::Window
 		if id == Gosu::KbSpace
 			@player.jump
 		end
-		if id == Gosu::Kb
 	end
 end
 
