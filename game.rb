@@ -76,19 +76,19 @@ class Pipe
 	attr_reader :x, :y, :width, :height
 
 	def initialize(window)
-		@x = 768
+		@x = 968
 		@yBottom = nil
 		@yTop = nil
 		yPos
 		@image = Gosu::Image.new(window, "resources/images/pipe.png", false)
-		@width = 235
-		@height = 1103
-		@speed = 4
+		@width = 200
+		@height = 1100
+		@speed = 3
 	end
 	
 	def draw
-		@image.draw_rot(@x, @yBottom - 451, 2, 0)
-		@image.draw_rot(@x, @yTop - 451, 2, 180)
+		@image.draw_rot(@x - @width/2, @yBottom + @height/2, 2, 0)
+		@image.draw_rot(@x - @width/2, @yTop - @height/2, 2, 180)
 	end
 	
 	def move
@@ -98,14 +98,14 @@ class Pipe
 	def yPos
 		@yID = rand(3) + 1
 		if @yID == 1
-			@yBottom = 512
-			@yTop = 312
+			@yBottom = 532
+			@yTop = 332
 		elsif @yID == 2
-			@yBottom = 312
-			@yTop = 112
+			@yBottom = 332
+			@yTop = 132
 		elsif @yID == 3
-			@yBottom = 712
-			@yTop = 512
+			@yBottom = 732
+			@yTop = 532
 		end
 	end
 end
@@ -128,7 +128,7 @@ class GameWindow < Gosu::Window
 		if @initLockout == false
 			@player.move
 			@pipeTimer += 1
-			if @pipeTimer == 89
+			if @pipeTimer == 149
 				@pipes.push Pipe.new(self)
 				@pipeTimer = 0
 			end
