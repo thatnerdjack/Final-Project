@@ -12,11 +12,14 @@ require "gosu"
 
 class Player
 
+	attr_reader :x, :y, :width, :height, :angle
+
 	def initialize(window)
 		@x = 230
 		@y = 480
 		@vy = 0
 		@image = Gosu::Image.new(window, "resources/images/player.png", false)
+		@angle = 0
 	end
 	
 	def move
@@ -32,7 +35,7 @@ class Player
 	end
 	
 	def draw
-		@image.draw(@x, @y, 3)
+		@image.draw_rot(@x, @y, 3, @angle)
 	end
 end
 
@@ -73,7 +76,7 @@ end
 
 class Pipe
 
-	attr_reader :x, :y, :width, :height
+	attr_reader :x, :yBottom, :yTop, :width, :height
 
 	def initialize(window)
 		@x = 968
@@ -135,6 +138,12 @@ class GameWindow < Gosu::Window
 			@pipes.each do |pipe|
 				pipe.move
 			end
+			@pipes.each do |pipe|
+				if touching?(pipe, @player)
+					pipe.speed = 0
+					@player.angle = 180
+				end
+			end
 		else
 			if button_down?(Gosu::KbSpace)
 				@initLockout = false
@@ -157,6 +166,15 @@ class GameWindow < Gosu::Window
 			fontTapTap.draw("Tap>>•<<Tap", 225, 612, 10)
 			fontGetReady.draw("Get Ready!", 165, 290, 10)
 		end
+	end
+	
+	def xTouching?(obj1, obj2)
+		(obj1.x - obj2.x).abs < (obj1.width + obj2.width)/2
+	end
+	
+	def yTouching?(obj1, obj2, pipeBoolean)
+		if pipeBoolean == true
+			#put touching method here for pipes
 	end
 	
 	def button_down(id)
