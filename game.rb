@@ -12,11 +12,13 @@ require "gosu"
 
 class Player
 
-	attr_reader :x, :y, :width, :height, :angle
+	attr_reader :x, :y, :width, :height
 
 	def initialize(window)
 		@x = 230
 		@y = 480
+		@width = 100
+		@height = 100
 		@vy = 0
 		@image = Gosu::Image.new(window, "resources/images/player.png", false)
 		@angle = 0
@@ -32,6 +34,10 @@ class Player
 	
 	def jump
 		@vy = -15
+	end
+	
+	def flip
+		@angle = 180
 	end
 	
 	def draw
@@ -98,6 +104,10 @@ class Pipe
 		@x -= @speed
 	end
 	
+	def stop
+		@speed = 0
+	end
+	
 	def yPos
 		@yID = rand(3) + 1
 		if @yID == 1
@@ -139,9 +149,12 @@ class GameWindow < Gosu::Window
 				pipe.move
 			end
 			@pipes.each do |pipe|
-				if touching?(pipe, @player)
-					pipe.speed = 0
-					@player.angle = 180
+				if pipeTouching?(@player, pipe)
+					pipe.stop
+					@player.flip
+				end
+				if pipePassing?(@player, pipe)
+					puts "score"
 				end
 			end
 		else
@@ -168,13 +181,12 @@ class GameWindow < Gosu::Window
 		end
 	end
 	
-	def xTouching?(obj1, obj2)
-		(obj1.x - obj2.x).abs < (obj1.width + obj2.width)/2
+	def pipePassing?(obj1, pipe)
+		(obj1.x - pipe.x).abs < (obj1.width + pipe.width)/2
 	end
 	
-	def yTouching?(obj1, obj2, pipeBoolean)
-		if pipeBoolean == true
-			#put touching method here for pipes
+	def pipeTouching?(obj1, pipe)
+		(obj1.x - pipe.x).abs < (obj1.width + pipe.width)/2 and (obj1.y - pipe.yTop).abs < (obj1.height + pipe.height)/2 and (obj1.y - pipe.yBottom).abs < (obj1.height + pipe.height)/2
 	end
 	
 	def button_down(id)
