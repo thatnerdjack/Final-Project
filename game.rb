@@ -111,19 +111,21 @@ class Pipe
 	def yPos
 		@yID = rand(3) + 1
 		if @yID == 1
-			@yBottom = 532
-			@yTop = 332
+			@yBottom = 550
+			@yTop = 300
 		elsif @yID == 2
-			@yBottom = 332
-			@yTop = 132
+			@yBottom = 350
+			@yTop = 100
 		elsif @yID == 3
-			@yBottom = 732
-			@yTop = 532
+			@yBottom = 750
+			@yTop = 500
 		end
 	end
 end
 
 class GameWindow < Gosu::Window
+
+	attr_reader :canDie
 
 	def initialize
 		super(768,1024,false)
@@ -135,13 +137,17 @@ class GameWindow < Gosu::Window
 		@pipes = []
 		@pipes.push Pipe.new(self)
 		@pipeTimer = 0
+		@pipeGen = true
+		@canScore = true
+		@canJump = true
+		@gameOver = false
 	end
 	
 	def update
 		if @initLockout == false
 			@player.move
 			@pipeTimer += 1
-			if @pipeTimer == 149
+			if @pipeTimer == 149 and @pipeGen == true
 				@pipes.push Pipe.new(self)
 				@pipeTimer = 0
 			end
@@ -150,11 +156,11 @@ class GameWindow < Gosu::Window
 			end
 			@pipes.each do |pipe|
 				if pipeTouching?(@player, pipe)
-					pipe.stop
-					@player.flip
+					gameOver
 				end
-				if pipePassing?(@player, pipe)
+				if pipePassing?(@player, pipe) and @canScore == true
 					puts "score"
+					#scoring not implemented yet
 				end
 			end
 		else
@@ -179,6 +185,12 @@ class GameWindow < Gosu::Window
 			fontTapTap.draw("Tap>>•<<Tap", 225, 612, 10)
 			fontGetReady.draw("Get Ready!", 165, 290, 10)
 		end
+		if @gameOver == true
+			bgC = Gosu::Color.argb(0x60000000)
+			fontGameOver = Gosu::Font.new(self, "resources/fonts/font.ttf", 96)
+			self.draw_quad(0, 0, bgC, 768, 0, bgC, 768, 1024, bgC, 0, 1024, bgC, 9)
+			fontGameOver.draw("Game Over", 160, 290, 10)
+		end
 	end
 	
 	def pipePassing?(obj1, pipe)
@@ -186,11 +198,22 @@ class GameWindow < Gosu::Window
 	end
 	
 	def pipeTouching?(obj1, pipe)
-		(obj1.x - pipe.x).abs < (obj1.width + pipe.width)/2 and (obj1.y - pipe.yTop).abs < (obj1.height + pipe.height)/2 and (obj1.y - pipe.yBottom).abs < (obj1.height + pipe.height)/2
+		(obj1.y - pipe.yTop).abs < (obj1.height + pipe.height)/2 or (obj1.y - pipe.yBottom).abs < (obj1.height + pipe.height)/2 and (obj1.x - pipe.x).abs < (obj1.width + pipe.width)/2
+	end
+	
+	def gameOver
+		@pipes.each do |pipe|
+			pipe.stop
+		end
+		@player.flip
+		@pipeGen = false
+		@canScore = false
+		@canJump = false
+		@gameOver = true
 	end
 	
 	def button_down(id)
-		if id == Gosu::KbSpace
+		if id == Gosu::KbSpace and @canJump == true
 			@player.jump
 		end
 	end
